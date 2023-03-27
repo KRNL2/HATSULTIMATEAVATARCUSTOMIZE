@@ -6,11 +6,41 @@ local Home = window:CreateTab("Home")
 
 local label = Home:CreateLabel("Created by lynx.#8337")
 
---local button = Home:CreateButton("Coming Soon", function()
---    print("Clicked")
--- end)
-
 local Hats = window:CreateTab("Hats")
+
+
+Hats:CreateTextbox("Accessory ID", function()
+-- Inserting A remote event into ReplicatedStorage and naming it PutOnClothes --
+wait(0.5)
+local RE = Instance.new("RemoteEvent")
+RE.Parent = game.ReplicatedStorage
+RE.Name = "PutOnClothes"
+
+wait(0.5)
+
+local event = workspace:WaitForChild("LoadAsset")
+local iService = game:GetService("InsertService")
+
+event.OnServerEvent:Connect(function(player, id)
+	local char = player.Character
+	local assetModel = iService:LoadAsset(id)
+	for _,v in pairs(assetModel:GetChildren()) do
+		if v:IsA("Accessory") then
+			char.Humanoid:AddAccessory(v)
+		elseif v:IsA("Shirt") then
+			local templ = v.ShirtTemplate
+			char.Shirt.ShirtTemplate = templ
+		elseif v:IsA("Pants") then
+			local temp1 = v.PantsTemplate
+			char.Pants.PantsTemplate = temp1
+		elseif v:IsA("Decal") then
+			char.Head:FindFirstChildOfClass("Decal").Texture = v.Texture
+		end
+	end
+	
+	assetModel:Destroy()
+end)
+end, "WriteHere")
 
 local button = Hats:CreateButton("Remove Hats", function()
 for i,v in next, game:GetService('Players').LocalPlayer.Character:GetChildren() do
